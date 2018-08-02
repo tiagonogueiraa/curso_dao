@@ -3,7 +3,7 @@
 
 require_once("config.php");
 
-
+/*
 
 $sql = new Sql();
 
@@ -47,6 +47,43 @@ $usuario->login("userteste","123456");
 
 echo $usuario;
 
+echo "<br>--------------------------<br>";
+
+
+$aluno = new Usuario();
+
+$aluno->setDeslogin("aluno");
+$aluno->setDessenha("@1un0");
+
+$aluno->insert();
+
+echo "$aluno";
+
+
+echo "<br>--------------------------<br>";
+
+
+$aluno = new Usuario("aluno", "@lun0");
+
+$aluno->insert();
+
+echo "$aluno";
+
+
+*/
+echo "<br>--------------------------<br>";
+
+ 
+echo "update<br>";
+
+
+$usuario = new Usuario();
+
+$usuario->loadById(9);
+
+$usuario->update("professor","senha");
+
+echo "$usuario";
 
 
  ?>

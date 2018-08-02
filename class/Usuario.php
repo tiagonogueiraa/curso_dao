@@ -15,21 +15,21 @@ class Usuario {
         return $this->idusuario;
     }
 
-   
+
     public function setIdusuario($idusuario)
     {
         $this->idusuario = $idusuario;
 
-     
+
     }
 
-   
+
     public function getDeslogin()
     {
         return $this->deslogin;
     }
 
-   
+
     public function setDeslogin($deslogin)
     {
         $this->deslogin = $deslogin;
@@ -37,13 +37,13 @@ class Usuario {
         
     }
 
- 
+
     public function getDessenha()
     {
         return $this->dessenha;
     }
 
-   
+
     public function setDessenha($dessenha)
     {
         $this->dessenha = $dessenha;
@@ -56,7 +56,7 @@ class Usuario {
         return $this->dtcadastro;
     }
 
-   
+
     public function setDtcadastro($dtcadastro)
     {
         $this->dtcadastro = $dtcadastro;
@@ -71,17 +71,12 @@ class Usuario {
 
     	$results = $sql->select("SELECT * FROM tb_usuarios WHERE idusuario = :ID", array(
 
-    			":ID"=>$id
-    	));
+           ":ID"=>$id
+       ));
 
     	if (count($results) > 0){// verifica se existe
 
-    		$row = $results[0];
-
-    		$this->setIdusuario($row['idusuario']);
-    		$this->setDeslogin($row['deslogin']);
-    		$this->setDessenha($row['dessenha']);
-    		$this->setDtcadastro(new DateTime($row['dtcadastro']));
+    		$this->setData($results[0]);
 
     	}
     }
@@ -120,26 +115,71 @@ class Usuario {
 
         $results = $sql->select("SELECT * FROM tb_usuarios WHERE deslogin = :LOGIN AND dessenha = :PASSWORD", array(
 
-                ":LOGIN"=>$login,
-                ":PASSWORD"=>$password
+            ":LOGIN"=>$login,
+            ":PASSWORD"=>$password
         ));
 
         if (count($results) > 0){// verifica se existe
 
-            $row = $results[0];
+         $this->setData($results[0]);
 
-            $this->setIdusuario($row['idusuario']);
-            $this->setDeslogin($row['deslogin']);
-            $this->setDessenha($row['dessenha']);
-            $this->setDtcadastro(new DateTime($row['dtcadastro']));
+     } else {
 
-        } else {
+        throw new Exception(" Login ou senha inválidos");
 
-            throw new Exception(" Login ou senha inválidos");
-            
-        }
+    }
+
+}
+
+public function setData($data){
+
+    $this->setIdusuario($data['idusuario']);
+    $this->setDeslogin($data['deslogin']);
+    $this->setDessenha($data['dessenha']);
+    $this->setDtcadastro(new DateTime($data['dtcadastro']));
+
+}
+
+
+public function insert(){
+
+    $sql = new Sql();
+
+        //tored procedures são rotinas definidas no banco de dados, identificadas por um nome pelo qual podem ser invocadas. Um procedimento desses pode executar uma série de instruções, receber parâmetros e retornar valores.
+    //por ser mysql usa o CALL e parenteses para as varíaveis
+    $results = $sql->select("CALL sp_usuarios_insert(:LOGIN, :PASSWORD)", array(
+        ':LOGIN'=>$this->getDeslogin(),
+        ':PASSWORD'=>$this->getDessenha()    
+    ));
+
+    if (count($results) > 0) {
+
+        $this->setData($results[0]);
+    }
+}
+
+
+    public function update($login, $password){
+
+        $this->setDeslogin($login);
+        $this->setDessenha($password);
+
+        $sql = new Sql();
+
+        $sql->query("UPDATE tb_usuarios SET deslogin = :LOGIN, dessenha = :PASSWORD WHERE idusuario = :ID", array(
+                ':LOGIN'=>$this->getDeslogin(),
+                ':PASSWORD'=>$this->getDessenha(),
+                ':ID'=>$this->getIdusuario()
+        ));
+    }
+
+
+    public function __construct($login = "", $password = ""){
+
+        $this->setDeslogin($login);
+        $this->setDessenha($password);
 
     }
 }
 
- ?>
+?>
