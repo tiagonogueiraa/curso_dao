@@ -71,8 +71,10 @@ echo "$aluno";
 
 
 */
-echo "<br>--------------------------<br>";
 
+
+/*echo "<br>--------------------------<br>";
+ALTERAR USUARIO
  
 echo "update<br>";
 
@@ -85,5 +87,16 @@ $usuario->update("professor","senha");
 
 echo "$usuario";
 
+
+*/
+
+
+$usuario = new Usuario();
+
+$usuario->loadById(7);
+
+$usuario->delete();
+
+echo $usuario;
 
  ?>
